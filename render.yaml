@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: gym-backend
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "./start.sh"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gymdb
+          property: connectionString
+
+databases:
+  - name: gymdb
+    plan: free
