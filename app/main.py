@@ -7,9 +7,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-origins = [
-    "*",  # Allow all origins (for testing). Later you can restrict to your domain.
-]
+origins = ["*"]  # Allow all origins for testing
 
 app.add_middleware(
     CORSMiddleware,
