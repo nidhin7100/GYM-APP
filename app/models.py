@@ -8,6 +8,7 @@ class Workout(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
+    category = Column(String, nullable=False) 
     created_at = Column(DateTime, default=datetime.utcnow)
 
     sessions = relationship("WorkoutSession", back_populates="workout")
@@ -33,3 +34,4 @@ class WorkoutSet(Base):
     rest_seconds = Column(Integer)
 
     session = relationship("WorkoutSession", back_populates="sets")
+

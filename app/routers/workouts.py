@@ -15,7 +15,7 @@ def get_db():
 
 @router.post("/", response_model=schemas.Workout)
 def create_workout(workout: schemas.WorkoutCreate, db: Session = Depends(get_db)):
-    new_w = models.Workout(name=workout.name)
+    new_w = models.Workout(name=workout.name, category=workout.category)
     db.add(new_w)
     db.commit()
     db.refresh(new_w)
