@@ -33,10 +33,15 @@ def start_session(workout_id: int, db: Session = Depends(get_db)):
     return new_session
 
 @router.get("/range", response_model=List[WorkoutSessionOut])
-def get_sessions_range(start: datetime, end: datetime, db: Session = Depends(get_db)):
+def get_sessions_range(start: str, end: str, db: Session = Depends(get_db)):
+    # Convert Flutter date string → Python datetime
+    start_dt = datetime.fromisoformat(start)
+    end_dt = datetime.fromisoformat(end)
+
     return (
         db.query(models.WorkoutSession)
-        .filter(models.WorkoutSession.date >= start)
-        .filter(models.WorkoutSession.date <= end)
+        .filter(models.WorkoutSession.date >= start_dt)
+        .filter(models.WorkoutSession.date <= end_dt)
+        .order_by(models.WorkoutSession.date)
         .all()
     )
