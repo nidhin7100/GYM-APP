@@ -40,8 +40,15 @@ def add_set(session_id: int, set_data: schemas.SetCreate, db: Session = Depends(
     db.refresh(new_set)
     return new_set
 
-@router.get("/{session_id}", response_model=List[WorkoutSetOut])
-def get_sets(session_id: int, db: Session = Depends(get_db)):
-    return db.query(models.WorkoutSet).filter(
-        models.WorkoutSet.session_id == session_id
-    ).all()
+@router.get("/workout/{workout_id}", response_model=List[WorkoutSetOut])
+def get_sets_for_workout(workout_id: int, db: Session = Depends(get_db)):
+    return (
+        db.query(models.WorkoutSet)
+        .join(models.WorkoutSession, models.WorkoutSet.session_id == models.WorkoutSession.id)
+        .filter(models.WorkoutSession.workout_id == workout_id)
+        .all()
+    )
+
+@router.get("/all", response_model=List[WorkoutSetOut])
+def get_all_sets(db: Session = Depends(get_db)):
+    return db.query(models.WorkoutSet).all()

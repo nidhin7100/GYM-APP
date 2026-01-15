@@ -32,8 +32,11 @@ def start_session(workout_id: int, db: Session = Depends(get_db)):
     db.refresh(new_session)
     return new_session
 
-@router.get("/{workout_id}", response_model=List[WorkoutSessionOut])
-def get_sessions(workout_id: int, db: Session = Depends(get_db)):
-    return db.query(models.WorkoutSession).filter(
-        models.WorkoutSession.workout_id == workout_id
-    ).all()
+@router.get("/range", response_model=List[WorkoutSessionOut])
+def get_sessions_range(start: datetime, end: datetime, db: Session = Depends(get_db)):
+    return (
+        db.query(models.WorkoutSession)
+        .filter(models.WorkoutSession.date >= start)
+        .filter(models.WorkoutSession.date <= end)
+        .all()
+    )
