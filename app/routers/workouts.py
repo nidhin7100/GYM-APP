@@ -1,8 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from .. import models, schemas
-from typing import List
 
 router = APIRouter()
 
@@ -15,12 +14,13 @@ def get_db():
 
 @router.post("/", response_model=schemas.Workout)
 def create_workout(workout: schemas.WorkoutCreate, db: Session = Depends(get_db)):
+    # Check if workout already exists
+    existing = db.query(models.Workout).filter(models.Workout.name == workout.name).first()
+    if existing:
+        return existing  # <-- just return it
+
     new_w = models.Workout(name=workout.name, category=workout.category)
     db.add(new_w)
     db.commit()
     db.refresh(new_w)
     return new_w
-
-@router.get("/", response_model=List[schemas.Workout])
-def get_workouts(db: Session = Depends(get_db)):
-    return db.query(models.Workout).all()
