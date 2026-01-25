@@ -12,15 +12,22 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/", response_model=schemas.Workout)
-def create_workout(workout: schemas.WorkoutCreate, db: Session = Depends(get_db)):
-    # Check if workout already exists
-    existing = db.query(models.Workout).filter(models.Workout.name == workout.name).first()
-    if existing:
-        return existing  # <-- just return it
+@router.post("/")
+def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db)):
+    existing = db.query(Workout).filter(
+        Workout.name == workout.name
+    ).first()
 
-    new_w = models.Workout(name=workout.name, category=workout.category)
-    db.add(new_w)
+    if existing:
+        return existing
+
+    new_workout = Workout(
+        name=workout.name,
+        category=workout.category,
+    )
+
+    db.add(new_workout)
     db.commit()
-    db.refresh(new_w)
-    return new_w
+    db.refresh(new_workout)
+    return new_workout
+
